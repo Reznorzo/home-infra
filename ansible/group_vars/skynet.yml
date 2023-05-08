@@ -1,0 +1,522 @@
+---
+hostname: skynet
+webhook_port: 7000
+
+### Install packages with grog.package
+package_list:
+  - name: pve-headers
+  - name: git
+  - name: nut
+  - name: fail2ban
+  - name: ifupdown2
+  - name: libgl1
+  - name: libegl1
+  - name: restic
+  - name: rsyslog
+  - name: wireguard
+
+### Pip Packages
+pip_packages:
+  - proxmoxer
+  - thefuck
+
+### Disks
+# mergerfs_mount:
+#   - path: /mnt/Media
+
+# external_mount:
+#   - path: /media/external_hdd
+
+# parity_disks:
+#   - path: /mnt/parity1
+#     source: /dev/disk/by-id/ata-WDC_WD140EDGZ-11B1PA0_81GE39SV-part1
+#     fs: ext4
+#     opts: defaults
+#     content: false
+
+# data_disks:
+#   - path: /mnt/disk1
+#     source: /dev/disk/by-id/ata-ST8000NM0055-1RM112_ZA11KKDB-part1
+#     fs: ext4
+#     opts: defaults
+#     content: true
+#   - path: /mnt/disk2
+#     source: /dev/disk/by-id/ata-ST8000NM0055-1RM112_ZA11KJXC-part1
+#     fs: ext4
+#     opts: defaults
+#     content: true
+#   - path: /mnt/disk3
+#     source: /dev/disk/by-id/ata-WDC_WD140EDGZ-11B1PA0_9MGWV2JJ-part1
+#     fs: ext4
+#     opts: defaults
+#     content: true
+#   - path: /mnt/disk4
+#     source: /dev/disk/by-id/ata-WDC_WD140EDGZ-11B1PA0_9LK5AR2G-part1
+#     fs: ext4
+#     opts: defaults
+#     content: true
+
+# fstab_mergerfs:
+#   - source: "/mnt/disk*"
+#     mountpoint: "/mnt/Media"
+#     fs: fuse.mergerfs
+#     opts: "defaults,nonempty,allow_other,use_ino,cache.files=off,moveonenospc=true,category.create=mfs,dropcacheonclose=true,minfreespace=100G,fsname=mergerfs"
+
+# nfs_mount:
+#   - path: /mnt/synology_backup
+#     source: 192.168.30.25:/volume1/Backup/
+#     fs: nfs
+#     opts: defaults
+#     content: false
+#   - path: /mnt/synology_minio
+#     source: 192.168.30.25:/volume1/Minio/
+#     fs: nfs
+#     opts: defaults
+#     content: false
+
+### Syncthing/Retroarch
+# retroarch_roms_dir: /mnt/Media/Files/Roms/RetroArch-ROMs
+# retroarch_config_dir: /mnt/Media/Files/Roms/RetroArch
+
+# syncthing_api_key: "{{ secret_syncthing_api_skynet }}"
+# syncthing_device_id: "{{ secret_syncthing_skynet_device }}"
+# syncthing_gui_authentication: true
+# syncthing_gui_user: "{{ main_username }}"
+# syncthing_gui_pass: "{{ secret_syncthing_gui_pass }}"
+# syncthing_user: "{{ main_username }}"
+
+# syncthing_folders:
+#   - id: "{{ secret_syncthing_sys_folder_id }}"
+#     label: "RetroArch - System"
+#     path: "{{ retroarch_config_dir }}"
+#     type: "sendreceive"  # options are 'sendreceive' 'sendonly' and 'receiveonly'
+#     rescanInterval: 600  # time in seconds
+#     devices:
+#       - "{{ secret_syncthing_kelsier_device }}"
+#       - "{{ secret_syncthing_retroarchtv_device }}"
+#       - "{{ secret_syncthing_steamdeck_device }}"
+#   - id: "{{ secret_syncthing_rom_folder_id }}"
+#     label: "RetroArch - ROMs"
+#     path: "{{ retroarch_roms_dir }}"
+#     type: "sendonly"  # options are 'sendreceive' 'sendonly' and 'receiveonly'
+#     rescanInterval: 600  # time in seconds
+#     devices:
+#       - "{{ secret_syncthing_kelsier_device }}"
+#       - "{{ secret_syncthing_retroarchtv_device }}"
+#       - "{{ secret_syncthing_steamdeck_device }}"
+
+# syncthing_devices:
+#   - id: "{{ secret_syncthing_retroarchtv_device }}"
+#     name: retroarch-tv
+#     address: tcp://192.168.10.40:22000
+#   - id: "{{ secret_syncthing_kelsier_device }}"
+#     name: kelsier
+#     address: tcp://192.168.10.10:22000
+#   - id: "{{ secret_syncthing_steamdeck_device }}"
+#     name: steamdeck
+#     address: tcp://192.168.10.125:22000
+
+### Infrastructure
+lxc:
+  # - name: HAL
+  #   vmid: 210
+  #   privileged: true
+  #   gw: 192.168.0.1
+  #   ip: 192.168.0.145
+  #   bridge: vmbr0
+  #   disk: 'local-lvm:5'
+  #   cores: 2
+  #   memory: 512
+  - name: Hal
+    vmid: 215
+    unprivileged: true
+    gw: 192.168.0.1
+    ip: 192.168.0.125
+    bridge: vmbr2
+    disk: 'local-lvm:15'
+    cores: 2
+    memory: 1024
+    nesting: 1
+    keyctl: 1
+#   - name: Omada
+#     vmid: 202
+#     privileged: true
+#     gw: 192.168.1.1
+#     ip: 192.168.1.10
+#     bridge: vmbr0
+#     disk: 'local-lvm:10'
+#     cores: 2
+#     memory: 1024
+#     nesting: 1
+#     keyctl: 1
+#   - name: Drone
+#     vmid: 203
+#     privileged: false
+#     gw: 192.168.50.1
+#     ip: 192.168.50.15
+#     bridge: vmbr2
+#     disk: 'local-lvm:25'
+#     cores: 12
+#     memory: 2048
+#     nesting: 1
+#     keyctl: 1
+#   - name: Invention
+#     vmid: 210
+#     privileged: true
+#     gw: 192.168.30.1
+#     ip: 192.168.30.7
+#     bridge: vmbr1
+#     disk: 'local-lvm:15'
+#     cores: 4
+#     memory: 4096
+#     nesting: 1
+#     keyctl: 1
+#     onboot: false
+#   - name: Autonomy
+#     vmid: 251
+#     privileged: false
+#     gw: 192.168.30.1
+#     ip: 192.168.30.5
+#     disk: 'local-lvm:35'
+#     cores: 6
+#     memory: 3072
+#     nesting: 1
+#     keyctl: 1
+#   - name: Cultivation
+#     vmid: 252
+#     privileged: true
+#     gw: 192.168.50.1
+#     ip: 192.168.50.21
+#     bridge: vmbr2
+#     disk: 'local-lvm:25'
+#     cores: 4
+#     memory: 3096
+#     nesting: 1
+#     keyctl: 1
+#   - name: Preservation
+#     vmid: 253
+#     privileged: true
+#     gw: 192.168.50.1
+#     ip: 192.168.50.22
+#     bridge: vmbr2
+#     disk: 'local-lvm:40'
+#     cores: 4
+#     memory: 3072
+#     nesting: 1
+#     keyctl: 1
+
+lxc_mounts:
+  - name: Glados
+    vmid: 250
+    unprivileged: false
+    gw: 192.168.0.1
+    ip: 192.168.0.126
+    bridge: vmbr0
+    disk: 'local-lvm:60'
+    cores: 8
+    memory: 5120
+    nesting: 1
+    keyctl: 0
+    fsmount: cifs
+
+### Bash Aliases
+bash_docker: true
+bash_autorestic: true
+bash_systemctl: true
+bash_apt: true
+
+### Variables
+install_nut: false
+pull_backup: false
+infrastructure: true
+# mergerfs_ver: 2.32.4
+# nag_ver: 0.0.7
+
+### Telegraf
+# telegraf_influx_token: "{{ secret_telegraf_skynet }}"
+# telegraf_influx_bucket: skynet
+# telegraf_influx_disk_mounts: '"/","/mnt/Media"'
+# telegraf_influx_docker: true
+# telegraf_influx_pve: true
+# telegraf_influx_pve_api: "{{ secret_telegraf_skynet_api }}"
+
+### Cronjobs
+# cronjobs:
+#   - name: Scrutiny
+#     job: /usr/local/bin/runitor -uuid {{ secret_hc_skynet_scrutiny }} -- docker exec scrutiny /opt/scrutiny/bin/scrutiny-collector-metrics run > /dev/null 2>&1
+#     user: "{{ main_username }}"
+#     minute: 0
+#     hour: '*/6'
+#   - name: Restic Prune
+#     job: /usr/local/bin/runitor -uuid {{ secret_hc_restic_prune_skynet }} -- /usr/local/bin/autorestic exec -a -- forget --keep-daily 1 --keep-weekly 8 --keep-monthly 4 --prune
+# #    job: /usr/local/bin/runitor -uuid {{ secret_hc_restic_prune_skynet }} -- /usr/local/bin/autorestic forget -a -- prune
+#     user: "{{ main_username }}"
+#     minute: 0
+#     hour: 1
+#     weekday: 1
+#   - name: Restic Check
+#     job: /usr/local/bin/runitor -uuid {{ secret_hc_restic_check_skynet }} -- /usr/local/bin/autorestic check
+#     user: "{{ main_username }}"
+#     minute: 30
+#     hour: 3
+#     day: 1
+#   - name: Media Backup (Docker)
+#     job: /usr/local/bin/runitor -uuid {{ secret_hc_restic_backup_skynet_docker }} -- /usr/local/bin/autorestic backup -l docker -c /home/{{ main_username }}/.autorestic.yml
+#     user: root
+#     minute: 45
+#     hour: 23
+#   - name: Media Backup (Everything Else)
+#     job: /usr/local/bin/runitor -uuid {{ secret_hc_restic_backup_skynet_all }} -- /usr/local/bin/autorestic backup -l photos -l files -l music -l audiobooks -c /home/{{ main_username }}/.autorestic.yml
+#     user: root
+#     minute: 15
+#     hour: 1
+#     weekday: 0,3,5
+#   - name: CPU Governor
+#     job: "echo 'ondemand' | tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor"
+#     user: root
+#     special_time: reboot
+
+### Autorestic Config
+# autorestic_config_yaml:
+#   version: 2
+#   backends:
+#     synology_docker:
+#       type: s3
+#       path: 'http://192.168.30.25:9000/skynet'
+#       key: "{{ secret_restic_repo_password }}"
+#       env:
+#         - AWS_ACCESS_KEY_ID: "{{ secret_minio_s3_access_key_id }}"
+#         - AWS_SECRET_ACCESS_KEY: "{{ secret_minio_s3_access_key }}"
+#     synology_photos:
+#       type: s3
+#       path: 'http://192.168.30.25:9000/media/photos'
+#       key: "{{ secret_restic_repo_password }}"
+#       env:
+#         - AWS_ACCESS_KEY_ID: "{{ secret_minio_s3_access_key_id }}"
+#         - AWS_SECRET_ACCESS_KEY: "{{ secret_minio_s3_access_key }}"
+#     synology_music:
+#       type: s3
+#       path: 'http://192.168.30.25:9000/media/music'
+#       key: "{{ secret_restic_repo_password }}"
+#       env:
+#         - AWS_ACCESS_KEY_ID: "{{ secret_minio_s3_access_key_id }}"
+#         - AWS_SECRET_ACCESS_KEY: "{{ secret_minio_s3_access_key }}"
+#     synology_audiobooks:
+#       type: s3
+#       path: 'http://192.168.30.25:9000/media/audiobooks'
+#       key: "{{ secret_restic_repo_password }}"
+#       env:
+#         - AWS_ACCESS_KEY_ID: "{{ secret_minio_s3_access_key_id }}"
+#         - AWS_SECRET_ACCESS_KEY: "{{ secret_minio_s3_access_key }}"
+#     synology_files:
+#       type: s3
+#       path: 'http://192.168.30.25:9000/media/files'
+#       key: "{{ secret_restic_repo_password }}"
+#       env:
+#         - AWS_ACCESS_KEY_ID: "{{ secret_minio_s3_access_key_id }}"
+#         - AWS_SECRET_ACCESS_KEY: "{{ secret_minio_s3_access_key }}"
+#     b2_docker:
+#       type: b2
+#       path: "{{ secret_restic_b2_bucket }}:/skynet"
+#       key: "{{ secret_restic_repo_password }}"
+#       env:
+#         - B2_ACCOUNT_ID: "{{ secret_restic_b2_account_id }}"
+#         - B2_ACCOUNT_KEY: "{{ secret_restic_b2_account_key }}"
+#     b2_photos:
+#       type: b2
+#       path: "{{ secret_media_b2_bucket }}:/photos"
+#       key: "{{ secret_restic_repo_password }}"
+#       env:
+#         - B2_ACCOUNT_ID: "{{ secret_media_b2_account_id }}"
+#         - B2_ACCOUNT_KEY: "{{ secret_media_b2_account_key }}"
+#     b2_music:
+#       type: b2
+#       path: "{{ secret_media_b2_bucket }}:/music"
+#       key: "{{ secret_restic_repo_password }}"
+#       env:
+#         - B2_ACCOUNT_ID: "{{ secret_media_b2_account_id }}"
+#         - B2_ACCOUNT_KEY: "{{ secret_media_b2_account_key }}"
+#     b2_audiobooks:
+#       type: b2
+#       path: "{{ secret_media_b2_bucket }}:/audiobooks"
+#       key: "{{ secret_restic_repo_password }}"
+#       env:
+#         - B2_ACCOUNT_ID: "{{ secret_media_b2_account_id }}"
+#         - B2_ACCOUNT_KEY: "{{ secret_media_b2_account_key }}"
+#     b2_files:
+#       type: b2
+#       path: "{{ secret_media_b2_bucket }}:/files"
+#       key: "{{ secret_restic_repo_password }}"
+#       env:
+#         - B2_ACCOUNT_ID: "{{ secret_media_b2_account_id }}"
+#         - B2_ACCOUNT_KEY: "{{ secret_media_b2_account_key }}"
+#       options:
+#         backup:
+#           exclude:
+#             - '*.iso'
+#   locations:
+#     docker:
+#       from: '/home/{{ main_username }}/docker'
+#       to:
+#         - synology_docker
+#         - b2_docker
+#       options:
+#         forget:
+#           keep-daily: 1
+#           keep-weekly: 8
+#           keep-monthly: 4
+#     photos:
+#       from: '/mnt/Media/Photos'
+#       to:
+#         - synology_photos
+#         - b2_photos
+#       options:
+#         forget:
+#           keep-daily: 1
+#           keep-weekly: 8
+#           keep-monthly: 4
+#     music:
+#       from: '/mnt/Media/Music'
+#       to:
+#         - synology_music
+#         - b2_music
+#       options:
+#         forget:
+#           keep-daily: 1
+#           keep-weekly: 8
+#           keep-monthly: 4
+#     audiobooks:
+#       from: '/mnt/Media/Audiobooks'
+#       to:
+#         - synology_audiobooks
+#         - b2_audiobooks
+#       options:
+#         forget:
+#           keep-daily: 1
+#           keep-weekly: 8
+#           keep-monthly: 4
+#     files:
+#       from: '/mnt/Media/Files'
+#       to:
+#         - synology_files
+#         - b2_files
+#       options:
+#         backup:
+#           exclude:
+#             - 'Takeout'
+#         forget:
+#           keep-daily: 1
+#           keep-weekly: 8
+#           keep-monthly: 4
+
+### Snapraid Config
+# snapraid_force_install: false
+# snapraid_install: false
+# snapraid_runner: false
+# snapraid_bin_path: /usr/bin/snapraid
+# snapraid_runner_email_address_from: "{{ secret_snapraid_email_from }}"
+# snapraid_runner_email_address_to: "{{ secret_snapraid_email_to }}"
+# snapraid_runner_email_address: "{{ secret_snapraid_email_address }}"
+# snapraid_runner_email_pass: "{{ secret_snapraid_email_pass }}"
+# snapraid_runner_smtp_host: "{{ secret_snapraid_smtp_host }}"
+# snapraid_runner_smtp_port: 465
+# snapraid_runner_use_ssl: true
+# snapraid_runner_touch: false
+# snapraid_runner_command: "python3 {{ snapraid_run_bin }} -c {{ snapraid_run_conf }}"
+# snapraid_runner_cron_jobs:
+#   - {job: '/usr/local/bin/runitor -uuid {{ secret_hc_skynet_snapraid }} -- {{ snapraid_run_command }}', name: 'snapraid_runner', weekday: '*', hour: '04'}
+# snapraid_config_excludes:
+#   - "*.unrecoverable"
+#   - "/tmp/"
+#   - "/lost+found/"
+#   - "downloads/"
+#   - "appdata/"
+#   - "*.!sync"
+#   - ".AppleDouble"
+#   - "._AppleDouble"
+#   - ".DS_Store"
+#   - "._.DS_Store"
+#   - ".Thumbs.db"
+#   - ".fseventsd"
+#   - ".Spotlight-V100"
+#   - ".TemporaryItems"
+#   - ".AppleDB"
+#   - ".Trash*"
+
+### Docker-Compose with ironicbadger.docker_compose_generator
+appdata_path: "/home/{{ main_username }}/docker"
+containers:
+  ###
+  - service_name: remote-api
+    container_name: remote-api
+    active: true
+    image: kekru/docker-remote-api-tls:v0.4.0
+    restart: always
+    ports:
+      - 2376:443
+    volumes:
+      - "{{ appdata_path }}/docker-api:/data/certs"
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - CREATE_CERTS_WITH_PW={{ secret_docker_api_tls }}
+      - CERT_HOSTNAME=docker-remote.local
+    include_global_env_vars: false
+  ###
+  - service_name: portainer
+    container_name: portainer
+    active: true
+    image: portainer/portainer-ce:2.18.2
+    restart: always
+    mem_limit: 200M
+    ports:
+      - 9000:9000
+      - 8000:8000
+    volumes:
+      - /srv/docker/portainer:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - AGENT_SECRET={{ secret_portainer_key }}
+    include_global_env_vars: false
+  ###
+  # - service_name: scrutiny
+  #   container_name: scrutiny
+  #   active: true
+  #   image: ghcr.io/analogj/scrutiny:v0.7.1-omnibus
+  #   restart: always
+  #   privileged: true
+  #   ports:
+  #     - 8080:8080
+  #   volumes:
+  #     - "{{ appdata_path }}/scrutiny:/scrutiny/config"
+  #     - /run/udev:/run/udev:ro
+  #   devices:
+  #     ### THIS IS LIKELY UNNCESSARY WITH THE PRIVILEGED FLAG
+  #     # - /dev/sda:/dev/sda # SSD for later
+  #     - /dev/sdb:/dev/sdb
+  #     - /dev/sdc:/dev/sdc
+  #     - /dev/sdd:/dev/sdd
+  #     - /dev/sde:/dev/sde
+  #     - /dev/sdf:/dev/sdf
+  #     - /dev/nvme0:/dev/nvme0
+  #   cap_add:
+  #     - SYS_RAWIO
+  #     - SYS_ADMIN
+  #   include_global_env_vars: false
+  ###
+  # - service_name: handbrake
+  #   container_name: handbrake
+  #   active: true
+  #   image: jlesage/handbrake:v23.04.1
+  #   restart: always
+  #   ports:
+  #     - 5800:5800
+  #   volumes:
+  #     - "{{ appdata_path }}/handbrake/config:/config"
+  #     - "{{ appdata_path }}/handbrake/storage:/storage"
+  #     - "/mnt/Media/Movies/1-Processing/Handbrake/Watch:/watch"
+  #     - "/mnt/Media/Movies/1-Processing/Handbrake/Output:/output"
+  #   devices:
+  #     - /dev/dri:/dev/dri
+  #   environment:
+  #     - TZ={{ ntp_timezone }}
+  #   include_global_env_vars: false

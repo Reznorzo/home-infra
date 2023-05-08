@@ -1,0 +1,23 @@
+## skynet samba configuration
+
+[global]
+  server min protocol = SMB2_02
+  workgroup = HOMEINFRA
+  server string = skynet
+  security = user
+  guest ok = no
+  map to guest = bad user
+
+  log file = /var/log/samba/%m.log
+  max log size = 50
+  printcap name = /dev/null
+  load printers = no
+
+[media]
+  comment = Media on skynet
+  public = yes
+  writeable = yes
+  path = /mnt/Media
+  valid users = samba
+  force user = {{ main_username }}
+  force group = {{ main_username }}

@@ -1,0 +1,360 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: Set timezone
+      timezone:
+        name: "{{ ntp_timezone }}"
+      when: ansible_distribution == 'Ubuntu'
+    - name: Remove Ubuntu motd spam
+      file:
+        path: "/etc/update-motd.d/{{ item }}"
+        state: absent
+      loop:
+        - 80-livepatch
+        - 95-hwe-eol
+        - 50-motd-news
+        - 10-help-text
+        - 88-esm-announce
+        - 91-contract-ua-esm-status
+      when: ansible_distribution == 'Ubuntu'
+
+### Proxmox
+- hosts: skynet
+  become: true
+  vars_files:
+    - '../vars/vault.yml'
+  pre_tasks:
+    - name: Remove enterprise repo
+      file:
+        state: absent
+        path: /etc/apt/sources.list.d/pve-enterprise.list
+    - name: Switch to community repo
+      apt_repository:
+        repo: 'deb http://download.proxmox.com/debian/pve bullseye pve-no-subscription'
+        state: present
+    - name: Apt update
+      apt:
+        upgrade: 'yes'
+        update_cache: yes
+        cache_valid_time: 3600
+  roles:
+    - role: install/nag_removal
+    - role: grog.package
+    - role: geerlingguy.pip
+    - role: install/pip_packages
+    - role: geerlingguy.samba
+    - role: geerlingguy.nfs
+    # - role: ironicbadger.figurine
+      tags: figurine    
+    # - role: install/mergerfs
+    # - role: fuzzymistborn.autorestic
+    # - role: install/runitor
+    # - role: install/telegraf
+    - role: skynet
+    # - role: install/bash_alias
+    # - role: install/syncthing
+    # - role: install/cronjobs
+    - role: geerlingguy.docker
+    - role: geerlingguy.ntp
+    # - role: install/webhook
+    - role: ironicbadger.docker_compose_generator
+    # - role: ironicbadger.snapraid
+
+### LXCs/VMs/VPS
+# - hosts: dominion
+#   become: true
+#   vars_files:
+#     - 'vars/vault.yml'
+#   roles:
+#     - role: grog.package
+#     - role: geerlingguy.pip
+#     - role: install/pip_packages
+    # - role: github
+    # - role: install/bitwarden_cli
+    # - role: install/runitor
+    # - role: dominion
+#     - role: install/bash_alias
+#     - role: install/cronjobs
+
+- hosts: glados
+  become: true
+  vars_files:
+    - 'vars/vault.yml'
+  roles:
+    - role: grog.package
+    - role: geerlingguy.samba
+    - role: geerlingguy.docker
+    - role: geerlingguy.pip
+    - role: install/pip_packages
+    # - role: ironicbadger.figurine
+      tags: figurine    
+    # - role: fuzzymistborn.autorestic
+    # - role: install/telegraf
+    # - role: install/runitor
+    - role: glados
+    # - role: bash_alias
+    # - role: cronjobs
+    - role: ironicbadger.docker_compose_generator
+
+- hosts: hal
+  become: true
+  vars_files:
+    - 'vars/vault.yml'
+  roles:
+    - role: grog.package
+    - role: geerlingguy.samba
+    - role: geerlingguy.docker
+    - role: geerlingguy.pip
+    - role: install/pip_packages
+    - role: install/tailscale
+    # - role: ironicbadger.figurine
+      tags: figurine    
+    # - role: fuzzymistborn.autorestic
+    # - role: install/telegraf
+    # - role: install/runitor
+    - role: hal
+    # - role: bash_alias
+    # - role: cronjobs
+    - role: ironicbadger.docker_compose_generator
+
+# - hosts: autonomy
+#   become: true
+#   vars_files:
+#     - 'vars/vault.yml'
+#   roles:
+#     - role: grog.package
+#     - role: github
+#     - role: geerlingguy.docker
+#     - role: geerlingguy.pip
+#     - role: install/pip_packages
+#     - role: fuzzymistborn.autorestic
+#     - role: install/telegraf
+#     - role: install/runitor
+#     - role: autonomy
+#     - role: bash_alias
+#     - role: cronjobs
+#     - role: install/webhook
+#     - role: ironicbadger.docker_compose_generator
+
+# - hosts: unity
+#   become: true
+#   vars_files:
+#     - 'vars/vault.yml'
+#   roles:
+#     - role: grog.package
+#     - role: geerlingguy.docker
+#     - role: geerlingguy.pip
+#     - role: install/pip_packages
+# #    - role: fuzzymistborn.autorestic
+#     - role: install/runitor
+#     - role: unity
+#     - role: bash_alias
+# #    - role: cronjobs
+#     - role: ironicbadger.docker_compose_generator
+
+# - hosts: cultivation
+#   become: true
+#   vars_files:
+#     - 'vars/vault.yml'
+#   roles:
+#     - role: grog.package
+#     - role: geerlingguy.docker
+#     - role: geerlingguy.pip
+#     - role: install/pip_packages
+#     - role: fuzzymistborn.autorestic
+#     - role: install/telegraf
+#     - role: install/runitor
+#     - role: cultivation
+#     - role: bash_alias
+#     - role: cronjobs
+#     - role: ironicbadger.docker_compose_generator
+
+# - hosts: preservation
+#   become: true
+#   vars_files:
+#     - 'vars/vault.yml'
+#   roles:
+#     - role: grog.package
+#     - role: geerlingguy.docker
+#     - role: geerlingguy.pip
+#     - role: install/pip_packages
+#     - role: fuzzymistborn.autorestic
+#     - role: install/telegraf
+#     - role: install/runitor
+#     - role: ironicbadger.docker_compose_generator
+#     - role: preservation
+#     - role: bash_alias
+#     - role: cronjobs
+
+# - hosts: honor
+#   become: true
+#   vars_files:
+#     - 'vars/vault.yml'
+#   roles:
+#     - role: grog.package
+#     - role: geerlingguy.pip
+#     - role: install/pip_packages
+#     - role: geerlingguy.docker
+#     - role: install/lego
+#     - role: fuzzymistborn.autorestic
+#     - role: install/runitor
+#     - role: caddy_ansible.caddy_ansible
+#     - role: honor
+#     - role: bash_alias
+#     - role: cronjobs
+#     - role: install/fail2ban
+#     - role: ironicbadger.docker_compose_generator
+
+# - hosts: valor
+#   become: true
+#   vars_files:
+#     - 'vars/vault.yml'
+#   roles:
+#     - role: grog.package
+#     - role: geerlingguy.pip
+#     - role: install/pip_packages
+#     - role: geerlingguy.docker
+#     - role: valor
+#     - role: bash_alias
+#     - role: install/tailscale
+#     - role: ironicbadger.docker_compose_generator
+
+# - hosts: omada
+#   become: true
+#   vars_files:
+#     - 'vars/vault.yml'
+#   roles:
+#     - role: grog.package
+#     - role: geerlingguy.pip
+#     - role: install/pip_packages
+#     - role: install/pip_packages
+#     - role: geerlingguy.docker
+#     - role: fuzzymistborn.autorestic
+#     - role: install/runitor
+#     - role: omada
+#     - role: bash_alias
+#     - role: cronjobs
+#     - role: ironicbadger.docker_compose_generator
+
+# - hosts: invention
+#   become: true
+#   vars_files:
+#     - 'vars/vault.yml'
+#   roles:
+#     - role: grog.package
+#     - role: geerlingguy.pip
+#     - role: install/pip_packages
+#     - role: install/pip_packages
+#     - role: geerlingguy.docker
+#     - role: invention
+#     - role: fuzzymistborn.autorestic
+#     - role: install/runitor
+#     - role: bash_alias
+#     - role: cronjobs
+#     - role: ironicbadger.docker_compose_generator
+
+# - hosts: drone
+#   become: true
+#   vars_files:
+#     - 'vars/vault.yml'
+#   roles:
+#     - role: grog.package
+#     - role: geerlingguy.pip
+#     - role: install/pip_packages
+#     - role: geerlingguy.docker
+#     - role: bash_alias
+#     - role: ironicbadger.docker_compose_generator
+
+# - hosts: ambition
+#   become: true
+#   vars_files:
+#     - 'vars/vault.yml'
+#   roles:
+#     - role: grog.package
+#     - role: geerlingguy.pip
+#     - role: install/pip_packages
+#     - role: geerlingguy.docker
+#     - role: install/lego
+#     - role: install/tailscale
+#     - role: fuzzymistborn.autorestic
+#     - role: install/runitor
+#     - role: ironicbadger.docker_compose_generator
+#     - role: ambition
+#     - role: caddy_ansible.caddy_ansible
+#     - role: bash_alias
+#     - role: cronjobs
+#     - role: install/fail2ban
+
+# ### Desktops
+# - hosts: kelsier
+#   become: true
+#   vars_files:
+#     - 'vars/vault.yml'
+#     - 'group_vars/desktop.yml'
+#     - 'group_vars/kelsier.yml'
+#   roles:
+#     - role: grog.package
+#     - role: geerlingguy.pip
+#     - role: install/pip_packages
+#     - role: fuzzymistborn.autorestic
+#     - role: install/runitor
+#     - role: desktop
+#     - role: kelsier
+#     - role: bash_alias
+# #    - role: config_retroarch
+#     - role: install/webhook
+#     - role: install/syncthing
+#     - role: install/telegraf
+#     - role: cronjobs
+
+# - hosts: vasher
+#   become: true
+#   vars_files:
+#     - 'vars/vault.yml'
+#     - 'group_vars/desktop.yml'
+#     - 'group_vars/vasher.yml'
+#   roles:
+#     - role: grog.package
+#     - role: geerlingguy.pip
+#     - role: install/pip_packages
+#     - role: fuzzymistborn.autorestic
+#     - role: install/runitor
+#     - role: desktop
+#     - role: bash_alias
+#     - role: install/webhook
+#     - role: install/telegraf
+#     - role: cronjobs
+
+# - hosts: szeth
+#   become: true
+#   vars_files:
+#     - 'vars/vault.yml'
+#     - 'group_vars/desktop.yml'
+#     - 'group_vars/szeth.yml'
+#   roles:
+#     - role: grog.package
+#     - role: geerlingguy.pip
+#     - role: install/pip_packages
+#     - role: fuzzymistborn.autorestic
+#     - role: install/runitor
+#     - role: desktop
+#     - role: bash_alias
+#     - role: install/webhook
+#     - role: install/telegraf
+#     - role: cronjobs
+
+# - hosts: hoid
+#   become: true
+#   vars_files:
+#     - 'vars/vault.yml'
+#     - 'group_vars/hoid.yml'
+#   roles:
+#     - role: grog.package
+#     - role: geerlingguy.pip
+#     - role: install/pip_packages
+#     - role: fuzzymistborn.autorestic
+#     - role: install/runitor
+#     - role: desktop
+#     - role: hoid
+#     - role: bash_alias

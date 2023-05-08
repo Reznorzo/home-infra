@@ -1,0 +1,87 @@
+---
+
+- name: create directories
+  file:
+    path: "/home/{{ main_username }}/{{ item }}"
+    state: directory
+    owner: "{{ main_username }}"
+    group: "{{ main_groupname }}"
+  loop:
+    - docker
+    - docker/diun
+    - scripts
+
+# - name: Copy scripts
+#   copy:
+#     src: "{{ item.path }}"
+#     dest: /home/{{ main_username }}/scripts/{{ item.path }}
+#     owner: "{{ main_username }}"
+#     group: "{{ main_username }}"
+#     mode: "{{ item.mode }}"
+#   loop:
+#     - {path: "nextcloud_cron.sh", mode: "+x"}
+
+# - name: Copy photos script templates
+#   template:
+#     src: "{{ item.src }}"
+#     dest: /home/{{ main_username }}/scripts/{{ item.dest }}
+#     owner: "{{ main_username }}"
+#     group: "{{ main_username }}"
+#     mode: +x
+#   loop:
+#     - {src: 'photos.sh.j2', dest: 'photos.sh'}
+
+# - name: Fix Jellyfin render group for iGPU passthrough
+#   shell: groupmod -g 150 postfix && groupmod -g 108 render && groupmod -g 107 postfix
+
+#### DIUN
+# - name: Copy DIUN Config Template
+#   template:
+#     src: diun_config.yml.j2
+#     dest: /home/{{ main_username }}/docker/diun/config.yml
+#     owner: "{{ main_username }}"
+#     group: "{{ main_username }}"
+
+### Mount disks
+- name: Set up disks/mounts
+  include_tasks: disks.yml
+
+### Backup Restore
+# - name: Create restore script
+#   copy:
+#     dest: /home/{{ main_username }}/restore.sh
+#     owner: "{{ main_username }}"
+#     group: "{{ main_username }}"
+#     mode: +x
+#     content: |
+#       #!/bin/bash
+#       /usr/local/bin/autorestic restore -f -l docker --from synology_docker --to /
+#   when: pull_backup == true
+# - name: Run restore script
+#   command: /bin/bash ./restore.sh
+#   args:
+#     chdir: "/home/{{ main_username }}"
+#   when: pull_backup == true
+# - name: Remove restore script
+#   file:
+#     path: /home/{{ main_username }}/restore.sh
+#     state: absent
+#   when: pull_backup == true
+
+### Rsyslog
+# - name: Copy rsyslog config templates
+#   template:
+#     src: "{{ item.src }}"
+#     dest: /etc/{{ item.dest }}
+#     owner: root
+#     group: root
+#     mode: 0644
+#   loop:
+#     - {src: 'rsyslog.conf.j2', dest: 'rsyslog.conf'}
+#     - {src: 'glados.conf.j2', dest: 'rsyslog.d/glados.conf'}
+
+# - name: restart rsyslog service
+#   service:
+#     name: rsyslog
+#     enabled: 'true'
+#     state: restarted

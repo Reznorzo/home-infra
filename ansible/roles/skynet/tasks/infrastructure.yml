@@ -1,0 +1,121 @@
+---
+### Create LXCs
+
+- name: Update pveam
+  command: pveam update
+
+- name: Download container templates
+  command: pveam download local {{ item }}
+  loop:
+    - ubuntu-22.04-standard_22.04-1_amd64.tar.zst
+    - debian-11-standard_11.6-1_amd64.tar.zst
+
+- name: Create LXCs
+  proxmox:
+    proxmox_default_behavior: no_defaults
+    vmid: "{{ item.vmid }}"
+    hostname: "{{ item.name }}"
+    unprivileged: "{{ item.unprivileged }}"
+    onboot: "{{ item.onboot | default ('true') }}"
+    state: present
+    node: pve
+    storage: local-lvm
+    disk: "{{ item.disk }}"
+    cpus: '1'
+    cpuunits: '1000'
+    cores: "{{ item.cores }}"
+    memory: "{{ item.memory }}"
+    swap: "{{ item.swap | default ('512') }}"
+    api_user: root@pam
+    api_host: localhost
+    api_password: "{{ secret_proxmox_api_password }}"
+    # api_token_id: Ansible
+    # api_token_secret: "{{ secret_proxmox_api_token }}"
+    pubkey: "{{ secret_proxmox_ct_ssh }}"
+    password: "{{ secret_proxmox_pass }}"
+    netif: '{"net0":"name=eth0,ip={{ item.ip }}/24,gw={{ item.gw }},bridge=vmbr0"}'
+    ostemplate: "{{ item.template| default ('local:vztmpl/ubuntu-22.04-standard_22.04-1_amd64.tar.zst') }}"
+    features:
+      - nesting={{ item.nesting | default ('0') }}
+      - keyctl={{ item.keyctl | default ('0') }}
+  with_items:
+    - "{{ lxc }}"
+
+- name: Create LXC CT w/ Mounts
+  proxmox:
+    proxmox_default_behavior: no_defaults
+    vmid: "{{ item.vmid }}"
+    hostname: "{{ item.name }}"
+    unprivileged: "{{ item.unprivileged }}"
+    onboot: "{{ item.onboot | default ('true') }}"
+    state: present
+    node: pve
+    storage: local-lvm
+    disk: "{{ item.disk }}"
+    cpus: '1'
+    cpuunits: '1000'
+    cores: "{{ item.cores }}"
+    memory: "{{ item.memory }}"
+    swap: "{{ item.swap | default ('512') }}"
+    api_user: root@pam
+    api_host: localhost
+    api_password: "{{ secret_proxmox_api_password }}"    
+    # api_token_id: Ansible
+    # api_token_secret: "{{ secret_proxmox_api_token }}"
+    pubkey: "{{ secret_proxmox_ct_ssh }}"
+    password: "{{ secret_proxmox_pass }}"
+    netif: '{"net0":"name=eth0,ip={{ item.ip }}/24,gw={{ item.gw }},bridge=vmbr0"}'
+    ostemplate: "{{ item.template| default ('local:vztmpl/ubuntu-22.04-standard_22.04-1_amd64.tar.zst') }}"
+    # mounts: "{'mp0':'/dev/disk/by-id/ata-ADATA_SU800_2M032LQKQ6P7-part1,mp=/mnt/scratch,backup=0'}"
+    features:
+      - nesting={{ item.nesting | default ('0') }}
+      - keyctl={{ item.keyctl | default ('0') }}
+      - mount={{ item.fsmount }}
+  loop: "{{ lxc_mounts }}"
+
+- name: Set boot order
+  shell: pct set {{ item.lxc }} --startup order={{ item.order }}
+  loop:
+    # - {"lxc":"200", "order":"5"}
+    # - {"lxc":"201", "order":"1"}
+    # - {"lxc":"202", "order":"4"}
+    # - {"lxc":"204", "order":"4"}
+    # - {"lxc":"206", "order":"5"}
+    - {"lxc":"250", "order":"1"}
+    # - {"lxc":"251", "order":"3"}
+    # - {"lxc":"252", "order":"3"}
+    # - {"lxc":"253", "order":"2"}
+    - {"lxc":"215", "order":"1"}
+
+- name: Glados - Add iGPU passthrough/disable apparmor
+  lineinfile:
+    dest: "/etc/pve/lxc/250.conf"
+    insertafter: EOF
+    line: |
+      lxc.cgroup2.devices.allow: c 226:0 rwm
+      lxc.cgroup2.devices.allow: c 226:128 rwm
+      lxc.cgroup2.devices.allow: c 29:0 rwm
+      lxc.mount.entry: /dev/dri dev/dri none bind,optional,create=dir
+      lxc.mount.entry: /dev/fb0 dev/fb0 none bind,optional,create=file
+      lxc.apparmor.profile: unconfined
+      lxc.cgroup2.devices.allow: a
+      lxc.cap.drop:
+    unsafe_writes: yes
+
+- name: Allow TUN for tailscale
+  lineinfile:
+    dest: "/etc/pve/lxc/215.conf"
+    insertafter: EOF
+    line: |
+      lxc.cgroup2.devices.allow: c 10:200 rwm
+      lxc.mount.entry: /dev/net/tun dev/net/tun none bind,create=file
+
+# - name: Autonomy - Add USB devices
+#   lineinfile:
+#     dest: "/etc/pve/lxc/251.conf"
+#     insertafter: EOF
+#     line: |
+#       lxc.apparmor.profile: unconfined
+#       lxc.cgroup2.devices.allow: a
+#       lxc.cap.drop:
+#     unsafe_writes: yes

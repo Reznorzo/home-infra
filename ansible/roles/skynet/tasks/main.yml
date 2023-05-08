@@ -1,0 +1,171 @@
+---
+
+### Basic Setup
+- name: Ensure user groups exists
+  group:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - "{{ main_username }}"
+    - ansible
+
+- name: Add users
+  user:
+    name: "{{ item.user }}"
+    password: "{{ item.pass }}"
+    groups:
+      - "{{ item.user }}"
+      - sudo
+    shell: /bin/bash
+  loop:
+    - {user: "{{ main_username }}", pass: "{{ secret_main_user_pass }}"}
+    - {user: ansible, pass: "{{ secret_ansible_pass }}"}
+
+- name: Add samba users
+  user:
+    name: samba
+    password: "!"
+    create_home: no
+
+- name: Add samba user password
+  shell: "printf '{{ secret_samba_pass }}\n{{ secret_samba_pass }}\n' | smbpasswd -a samba"
+
+- name: Add sudoers file for ansible
+  copy:
+    src: sudoer_ansible
+    dest: /etc/sudoers.d/ansible
+    owner: root
+    group: root
+    mode: 0440
+
+- name: SSH Keys
+  authorized_key:
+    user: "{{ item.user }}"
+    state: present
+    key: "{{ item.ssh }}"
+  loop:
+    - {user: "{{ main_username }}", ssh: "{{ secret_main_user_ssh }}"}
+    - {user: "{{ main_username }}", ssh: "{{ secret_main_user_alt_ssh }}"}
+    - {user: ansible, ssh: "{{ secret_ansible_ssh }}"}
+
+- name: create main user directories
+  file:
+    path: /home/{{ main_username }}/{{ item }}
+    state: directory
+    owner: "{{ main_username }}"
+    group: "{{ main_groupname }}"
+  loop:
+    - docker
+    - docker/scrutiny
+
+# - name: Copy backup scripts
+#   copy:
+#     src: "{{ item.src }}"
+#     dest: "{{ item.dest }}"
+#     mode: +x
+#   loop:
+#     - {src: "backup.sh", dest: "/home/{{ main_username }}/backup.sh"}
+
+### Webhooks
+- name: Copy webhook template
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode }}"
+    owner: "{{ main_username }}"
+    group: "{{ main_username }}"
+  loop:
+    - {src: "hooks.yaml.j2", dest: "/home/{{ main_username }}/.hooks.yaml", mode: "644"}
+
+### Infrastructure
+# - name: Set up disks/mounts
+#   include_tasks: disks.yml
+
+- name: Set up containers
+  include_tasks: infrastructure.yml
+  when: infrastructure == true
+
+- name: Install samba config
+  template:
+    src: smb.conf.j2
+    dest: /etc/samba/smb.conf
+    owner: root
+    group: root
+- name: Restart samba
+  service:
+    name: smbd
+    state: restarted
+
+#### NUT
+# - name: Copy nut folder
+#   copy:
+#     src: etc/nut/{{ item }}
+#     dest: /etc/nut/{{ item }}
+#     owner: root
+#     group: nut
+#     mode: 0640
+#   loop:
+#     - 'nut.conf'
+#     - 'ups.conf'
+#     - 'upsd.conf'
+#     - 'upsd.users'
+#     - 'upsmon.conf'
+#   when: install_nut == true
+
+# - name: Copy NUT script
+#   copy:
+#     src: nut.sh
+#     dest: /home/{{ main_username }}
+#     mode: +x
+#   when: install_nut == true
+
+# - name: Run NUT script
+#   command: /bin/bash ./nut.sh
+#   args:
+#     chdir: /home/{{ main_username }}
+#     creates: /home/{{ main_username }}/nut.sh
+#   when: install_nut == true
+
+### Backup Restore
+# - name: Create restore script
+#   copy:
+#     dest: /home/{{ main_username }}/restore.sh
+#     owner: "{{ main_username }}"
+#     group: "{{ main_username }}"
+#     mode: +x
+#     content: |
+#       #!/bin/bash
+#       /usr/local/bin/autorestic restore -f -l docker --from synology_docker --to /
+#   when: pull_backup == true
+# - name: Run restore script
+#   command: /bin/bash ./restore.sh
+#   args:
+#     chdir: "/home/{{ main_username }}"
+#   when: pull_backup == true
+# - name: Remove restore script
+#   file:
+#     path: /home/{{ main_username }}/restore.sh
+#     state: absent
+#   when: pull_backup == true
+
+### Wireguard/Misc
+# - name: Enable IPv4 forwarding
+#   sysctl:
+#     name: net.ipv4.ip_forward
+#     value: 1
+#     reload: yes
+
+# - name: Reboot Cronjob
+#   cron:
+#     name: "Set /dev/dri to 777"
+#     job: "chmod -R 777 /dev/dri"
+#     user: "root"
+#     special_time: reboot
+#     state: present
+
+# - name: Fix e1000 driver hang
+#   command: ethtool -K eno1 tso off gso off
+#   become: yes
+#   become_user: root
+# See https://blog.f2h.cloud/how-to-fix-proxmox-detected-hardware-unit-hang/ and https://forum.proxmox.com/threads/e1000-driver-hang.58284/page-8
+# Need to figure out how to added to /etc/network/interfaces to preserve after reboots

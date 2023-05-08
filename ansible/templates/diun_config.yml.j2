@@ -1,0 +1,31 @@
+watch:
+  workers: 20
+  schedule: "0 */6 * * *"
+
+providers:
+  docker:
+    watchByDefault: false
+    watchStopped: false
+
+notif:
+  discord:
+    webhookURL: "{{ secret_webhook_url }}"
+    mentions:
+      - "@here"
+      - "@everyone"
+    renderFields: true
+    timeout: 10s
+    templateBody: |
+      "Docker tag {{ .Entry.Image }} which you subscribed to through {{ .Entry.Provider }} provider has been released"
+
+regopts:
+  - name: "docker.io"
+    selector: image
+    username: geofflol
+    password: "{{ secret_diun_docker_pass }}"
+  - name: "ghcr.io"
+    selector: image
+  - name: "quay.io"
+    selector: image
+  - name: "registry.gitlab.com"
+    selector: image

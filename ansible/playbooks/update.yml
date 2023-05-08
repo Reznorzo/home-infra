@@ -1,0 +1,62 @@
+---
+
+- hosts: shards ambition
+  tasks:
+    - name: update all packages
+      become: true
+      apt:
+        update_cache: yes
+        cache_valid_time: 86400
+        upgrade: 'yes'
+        autoremove: yes
+
+- hosts: skynet
+  vars_files:
+    - 'vars/vault.yml'
+    - 'group_vars/all.yaml'
+  roles:
+    - role: install/mergerfs
+      become: true
+    - role: install/runitor
+    - role: install/telegraf
+      become: true
+  tasks:
+    - name: update all packages
+      become: true
+      apt:
+        update_cache: yes
+        cache_valid_time: 86400
+        upgrade: dist
+        autoremove: yes
+
+- hosts: ambition
+  vars_files:
+    - 'vars/vault.yml'
+    - 'group_vars/all.yaml'
+  roles:
+    - role: install/lego
+    - role: install/runitor
+
+- hosts: honor
+  vars_files:
+    - 'vars/vault.yml'
+    - 'group_vars/all.yaml'
+  roles:
+    - role: install/lego
+    - role: install/runitor
+
+- hosts: dominion omada
+  vars_files:
+    - 'vars/vault.yml'
+    - 'group_vars/all.yaml'
+  roles:
+    - role: install/runitor
+
+- hosts: endowment autonomy cultivation preservation
+  vars_files:
+    - 'vars/vault.yml'
+    - 'group_vars/all.yaml'
+  roles:
+    - role: install/runitor
+    - role: install/telegraf
+      become: true

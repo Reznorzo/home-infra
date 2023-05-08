@@ -1,0 +1,5 @@
+---
+- name: Install Pip Packages
+  pip:
+    name: "{{ item }}"
+  loop: "{{ pip_packages }}"
