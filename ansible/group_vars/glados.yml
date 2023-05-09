@@ -173,7 +173,6 @@ containers:
     container_name: prowlarr
     active: true
     image: ghcr.io/linuxserver/prowlarr:amd64-1.4.1.3258
-
     restart: always
     ports:
       - 9696:9696
