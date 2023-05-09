@@ -23,7 +23,7 @@
 - hosts: skynet
   become: true
   vars_files:
-    - '../../vars/vault.yml'
+    - '../vars/vault.yml'
   pre_tasks:
     - name: Remove enterprise repo
       file:
@@ -188,24 +188,24 @@
 #     - role: bash_alias
 #     - role: cronjobs
 
-# - hosts: honor
-#   become: true
-#   vars_files:
-#     - '../vars/vault.yml'
-#   roles:
-#     - role: grog.package
-#     - role: geerlingguy.pip
-#     - role: install/pip_packages
-#     - role: geerlingguy.docker
-#     - role: install/lego
-#     - role: fuzzymistborn.autorestic
-#     - role: install/runitor
-#     - role: caddy_ansible.caddy_ansible
-#     - role: honor
-#     - role: bash_alias
-#     - role: cronjobs
-#     - role: install/fail2ban
-#     - role: ironicbadger.docker_compose_generator
+- hosts: borg
+  become: true
+  vars_files:
+    - '../vars/vault.yml'
+  roles:
+    - role: grog.package
+    - role: geerlingguy.pip
+    - role: install/pip_packages
+    - role: geerlingguy.docker
+    # - role: install/lego
+    # - role: fuzzymistborn.autorestic
+    # - role: install/runitor
+    # - role: caddy_ansible.caddy_ansible
+    - role: honor
+    # - role: bash_alias
+    # - role: cronjobs
+    - role: install/fail2ban
+    - role: ironicbadger.docker_compose_generator
 
 # - hosts: valor
 #   become: true

@@ -23,7 +23,7 @@ install:
   @echo "Ansible vault git pre-commit hook installed"
 
 proxmox *TAGS:
-	cd {{ ansible_dir }}; ansible-playbook -u root -b playbooks/run.yml --ask-pass --limit skynet --tags {{TAGS}} 
+	cd {{ ansible_dir }}; ansible-playbook -u root -b playbooks/run.yml --ask-pass --limit skynet {{TAGS}} 
 
 bootstrap_lxc:
 	cd {{ ansible_dir }}; ansible-playbook -b playbooks/bootstrap.yml --limit lxc
