@@ -11,6 +11,6 @@
   ],
   "ansible": {
     "fileMatch": ["^ansible/group_vars/.*\\.yml$"]
-                   
+               
 }
 }
