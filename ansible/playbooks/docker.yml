@@ -3,7 +3,7 @@
 - hosts: "{{ host }}"
   become: true
   vars_files:
-    - '../var/vault.yml'
+    - '../vars/vault.yml'
   gather_facts: false
   vars_prompt:
     - name: host

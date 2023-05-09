@@ -4,7 +4,7 @@
   remote_user: root
   gather_facts: true
   vars_files:
-    - '../var/vault.yml'
+    - '../vars/vault.yml'
   tasks:
     - name: Apt update
       apt:
@@ -69,7 +69,7 @@
   remote_user: "{{ bootstrap_user }}"
   gather_facts: true
   vars_files:
-    - '../var/vault.yml'
+    - '../vars/vault.yml'
   tasks:
     - name: Apt update
       apt:
