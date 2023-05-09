@@ -10,7 +10,7 @@
     "Reznorzo"
   ],
   "ansible": {
-    "fileMatch": ["/^\/ansible\/group_vars/.*\\.ya?ml$"]
+    "fileMatch": ["^ansible/group_vars/.*\\.yml$"]
                    
 }
 }
