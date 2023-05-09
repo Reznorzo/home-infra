@@ -22,15 +22,15 @@ install:
   cd {{ scripts_dir }}; ./git-init.sh
   @echo "Ansible vault git pre-commit hook installed"
 
-proxmox:
-	cd {{ ansible_dir }}; ansible-playbook -u root -b playbooks/run.yml --limit skynet --ask-pass
+proxmox *TAGS:
+	cd {{ ansible_dir }}; ansible-playbook -u root -b playbooks/run.yml --ask-pass --limit skynet --tags {{TAGS}} 
 
 bootstrap_lxc:
 	cd {{ ansible_dir }}; ansible-playbook -b playbooks/bootstrap.yml --limit lxc
 
 # Run/Builds
-build HOST:
-	cd {{ ansible_dir }}; ansible-playbook -b playbooks/run.yml --limit {{HOST}}
+build HOST *TAGS:
+	cd {{ ansible_dir }}; ansible-playbook -b playbooks/run.yml --limit {{HOST}} --tags {{TAGS}}
 
 # Git commits and pushes
 git:

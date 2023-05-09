@@ -12,7 +12,7 @@
 
 - hosts: skynet
   vars_files:
-    - 'vars/vault.yml'
+    - '../var/vault.yml'
     - 'group_vars/all.yaml'
   roles:
     - role: install/mergerfs
@@ -31,7 +31,7 @@
 
 - hosts: ambition
   vars_files:
-    - 'vars/vault.yml'
+    - '../var/vault.yml'
     - 'group_vars/all.yaml'
   roles:
     - role: install/lego
@@ -39,7 +39,7 @@
 
 - hosts: honor
   vars_files:
-    - 'vars/vault.yml'
+    - '../var/vault.yml'
     - 'group_vars/all.yaml'
   roles:
     - role: install/lego
@@ -47,14 +47,14 @@
 
 - hosts: dominion omada
   vars_files:
-    - 'vars/vault.yml'
+    - '../var/vault.yml'
     - 'group_vars/all.yaml'
   roles:
     - role: install/runitor
 
 - hosts: endowment autonomy cultivation preservation
   vars_files:
-    - 'vars/vault.yml'
+    - '../var/vault.yml'
     - 'group_vars/all.yaml'
   roles:
     - role: install/runitor

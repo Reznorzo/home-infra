@@ -23,7 +23,7 @@
 - hosts: skynet
   become: true
   vars_files:
-    - '../vars/vault.yml'
+    - '../../var/vault.yml'
   pre_tasks:
     - name: Remove enterprise repo
       file:
@@ -52,6 +52,7 @@
     # - role: install/runitor
     # - role: install/telegraf
     - role: skynet
+      tags: infra
     # - role: install/bash_alias
     # - role: install/syncthing
     # - role: install/cronjobs
@@ -65,7 +66,7 @@
 # - hosts: dominion
 #   become: true
 #   vars_files:
-#     - 'vars/vault.yml'
+#     - '../../var/vault.yml'
 #   roles:
 #     - role: grog.package
 #     - role: geerlingguy.pip
@@ -80,7 +81,7 @@
 - hosts: glados
   become: true
   vars_files:
-    - 'vars/vault.yml'
+    - '../../var/vault.yml'
   roles:
     - role: grog.package
     - role: geerlingguy.samba
@@ -100,7 +101,7 @@
 - hosts: hal
   become: true
   vars_files:
-    - 'vars/vault.yml'
+    - '../var/vault.yml'
   roles:
     - role: grog.package
     - role: geerlingguy.samba
@@ -121,7 +122,7 @@
 # - hosts: autonomy
 #   become: true
 #   vars_files:
-#     - 'vars/vault.yml'
+#     - '../var/vault.yml'
 #   roles:
 #     - role: grog.package
 #     - role: github
@@ -140,7 +141,7 @@
 # - hosts: unity
 #   become: true
 #   vars_files:
-#     - 'vars/vault.yml'
+#     - '../var/vault.yml'
 #   roles:
 #     - role: grog.package
 #     - role: geerlingguy.docker
@@ -156,7 +157,7 @@
 # - hosts: cultivation
 #   become: true
 #   vars_files:
-#     - 'vars/vault.yml'
+#     - '../var/vault.yml'
 #   roles:
 #     - role: grog.package
 #     - role: geerlingguy.docker
@@ -173,7 +174,7 @@
 # - hosts: preservation
 #   become: true
 #   vars_files:
-#     - 'vars/vault.yml'
+#     - '../var/vault.yml'
 #   roles:
 #     - role: grog.package
 #     - role: geerlingguy.docker
@@ -190,7 +191,7 @@
 # - hosts: honor
 #   become: true
 #   vars_files:
-#     - 'vars/vault.yml'
+#     - '../var/vault.yml'
 #   roles:
 #     - role: grog.package
 #     - role: geerlingguy.pip
@@ -209,7 +210,7 @@
 # - hosts: valor
 #   become: true
 #   vars_files:
-#     - 'vars/vault.yml'
+#     - '../var/vault.yml'
 #   roles:
 #     - role: grog.package
 #     - role: geerlingguy.pip
@@ -223,7 +224,7 @@
 # - hosts: omada
 #   become: true
 #   vars_files:
-#     - 'vars/vault.yml'
+#     - '../var/vault.yml'
 #   roles:
 #     - role: grog.package
 #     - role: geerlingguy.pip
@@ -240,7 +241,7 @@
 # - hosts: invention
 #   become: true
 #   vars_files:
-#     - 'vars/vault.yml'
+#     - '../var/vault.yml'
 #   roles:
 #     - role: grog.package
 #     - role: geerlingguy.pip
@@ -257,7 +258,7 @@
 # - hosts: drone
 #   become: true
 #   vars_files:
-#     - 'vars/vault.yml'
+#     - '../var/vault.yml'
 #   roles:
 #     - role: grog.package
 #     - role: geerlingguy.pip
@@ -269,7 +270,7 @@
 # - hosts: ambition
 #   become: true
 #   vars_files:
-#     - 'vars/vault.yml'
+#     - '../var/vault.yml'
 #   roles:
 #     - role: grog.package
 #     - role: geerlingguy.pip
@@ -290,7 +291,7 @@
 # - hosts: kelsier
 #   become: true
 #   vars_files:
-#     - 'vars/vault.yml'
+#     - '../var/vault.yml'
 #     - 'group_vars/desktop.yml'
 #     - 'group_vars/kelsier.yml'
 #   roles:
@@ -311,7 +312,7 @@
 # - hosts: vasher
 #   become: true
 #   vars_files:
-#     - 'vars/vault.yml'
+#     - '../var/vault.yml'
 #     - 'group_vars/desktop.yml'
 #     - 'group_vars/vasher.yml'
 #   roles:
@@ -329,7 +330,7 @@
 # - hosts: szeth
 #   become: true
 #   vars_files:
-#     - 'vars/vault.yml'
+#     - '../var/vault.yml'
 #     - 'group_vars/desktop.yml'
 #     - 'group_vars/szeth.yml'
 #   roles:
@@ -347,7 +348,7 @@
 # - hosts: hoid
 #   become: true
 #   vars_files:
-#     - 'vars/vault.yml'
+#     - '../var/vault.yml'
 #     - 'group_vars/hoid.yml'
 #   roles:
 #     - role: grog.package
