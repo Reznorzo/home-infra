@@ -211,7 +211,7 @@ containers:
   - service_name: qbittorent
     container_name: qbittorent
     active: true
-    image: lscr.io/linuxserver/qbittorrent:4.5.2
+    image: lscr.io/linuxserver/qbittorrent:20.04.1
     restart: always
     ports:
       - 8080:8080
