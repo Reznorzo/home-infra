@@ -10,4 +10,4 @@ python3 -m venv env
 
 pip install -r ansible/dev-requirements.txt
 
-cd ansible/ && ansible-galaxy install -r galaxy-requirements.yml --force
+cd ansible/ && ansible-galaxy install -r requirements.yml --force
