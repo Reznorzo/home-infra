@@ -22,8 +22,8 @@ jobs:
 
 
       - name: Set up
-        run: ./scripts/ansible/setup.sh
+        run: ./scripts/setup.sh
       - name: Pretend executable is vault password
         run: chmod -x ansible/vault-pass.sh
       - name: Lint
-        run: ./scripts/ansible/lint.sh
+        run: ./scripts/lint.sh
