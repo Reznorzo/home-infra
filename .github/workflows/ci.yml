@@ -24,6 +24,6 @@ jobs:
       - name: Set up
         run: ./scripts/setup.sh
       - name: Pretend executable is vault password
-        run: chmod -x /scripts/vault.sh
+        run: chmod -x ./scripts/vault.sh
       - name: Lint
         run: ./scripts/lint.sh
