@@ -10,6 +10,6 @@ echo "${red}Vault not encrypted! Run 'just vault encrypt' and try again.${reset}
 exit 1
 fi
 read -p "Commit description: " desc
-git add . && \
+git add -A && \
 git commit -m "$desc" && \
 git push -u origin main
