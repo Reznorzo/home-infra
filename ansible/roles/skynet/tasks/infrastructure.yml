@@ -21,8 +21,8 @@
     node: pve
     storage: local-lvm
     disk: "{{ item.disk }}"
-    cpus: '1'
-    cpuunits: '1000'
+    cpus: "1"
+    cpuunits: "1000"
     cores: "{{ item.cores }}"
     memory: "{{ item.memory }}"
     swap: "{{ item.swap | default ('512') }}"
@@ -33,7 +33,7 @@
     # api_token_secret: "{{ secret_proxmox_api_token }}"
     pubkey: "{{ secret_proxmox_ct_ssh }}"
     password: "{{ secret_proxmox_pass }}"
-    netif: '{"net0":"name=eth0,ip={{ item.ip }}/24,gw={{ item.gw }},bridge=vmbr0"}'
+    netif: "{"net0":"name=eth0,ip={{ item.ip }}/24,gw={{ item.gw }},bridge=vmbr0"}""
     ostemplate: "{{ item.template| default ('local:vztmpl/ubuntu-22.04-standard_22.04-1_amd64.tar.zst') }}"
     features:
       - nesting={{ item.nesting | default ('0') }}
@@ -52,14 +52,14 @@
     node: pve
     storage: local-lvm
     disk: "{{ item.disk }}"
-    cpus: '1'
-    cpuunits: '1000'
+    cpus: "1"
+    cpuunits: "1000"
     cores: "{{ item.cores }}"
     memory: "{{ item.memory }}"
     swap: "{{ item.swap | default ('512') }}"
     api_user: root@pam
     api_host: localhost
-    api_password: "{{ secret_proxmox_api_password }}"    
+    api_password: "{{ secret_proxmox_api_password }}"
     # api_token_id: Ansible
     # api_token_secret: "{{ secret_proxmox_api_token }}"
     pubkey: "{{ secret_proxmox_ct_ssh }}"
