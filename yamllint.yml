@@ -6,9 +6,11 @@ ignore: |
 
 rules:
   document-start: disable
-  truthy: disable
-  quoted-strings:
-    quote-type: double
-    required: only-when-needed
-  line-length:
-    max: 160
+  truthy: 
+    allowed-values:
+      - 'true'
+      - 'false'
+      - 'yes'
+      - 'no'
+  quoted-strings: disable
+  line-length: disable
