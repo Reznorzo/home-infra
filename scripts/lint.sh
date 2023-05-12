@@ -4,7 +4,7 @@ set -e
 
 PATH=${PWD}/env/bin:${PATH}
 
-yamllint . -sc yamllint.yml
+yamllint -sc yamllint/yml ./ansible
 
 cd ansible/
 
