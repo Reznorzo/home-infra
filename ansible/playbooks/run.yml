@@ -46,7 +46,7 @@
     - role: geerlingguy.samba
     - role: geerlingguy.nfs
     # - role: ironicbadger.figurine
-      tags: figurine    
+      tags: figurine
     # - role: install/mergerfs
     # - role: fuzzymistborn.autorestic
     # - role: install/runitor
@@ -89,7 +89,7 @@
     - role: geerlingguy.pip
     - role: install/pip_packages
     # - role: ironicbadger.figurine
-      tags: figurine    
+      tags: figurine
     # - role: fuzzymistborn.autorestic
     # - role: install/telegraf
     # - role: install/runitor
@@ -110,7 +110,7 @@
     - role: install/pip_packages
     - role: install/tailscale
     # - role: ironicbadger.figurine
-      tags: figurine    
+      tags: figurine
     # - role: fuzzymistborn.autorestic
     # - role: install/telegraf
     # - role: install/runitor

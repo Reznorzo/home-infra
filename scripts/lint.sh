@@ -6,8 +6,8 @@ PATH=${PWD}/env/bin:${PATH}
 
 yamllint -sc yamllint.yml ./ansible
 
-cd ansible/
+cd ansible/playbooks
 
 ansible-lint -p
 
-ansible-playbook main.yml --syntax-check
+ansible-playbook run.yml --syntax-check
