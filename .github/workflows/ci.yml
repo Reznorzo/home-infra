@@ -1,0 +1,32 @@
+---
+name: Lint Ansible
+
+on:
+  push:
+    paths:
+      - ansible/**
+    branches:
+      - main
+  pull_request:
+    types: [opened, reopened, edited]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3.5.2
+
+      - name: Set up Python
+        uses: actions/setup-python@v4.6.0
+        with:
+          python-version: 3.9
+
+      - name: Install linters
+        working-directory: ansible/
+        run: |
+          pip install $(grep wheel dev-requirements.txt)
+          pip install $(grep yamllint dev-requirements.txt)
+
+      - name: Lint YAML files
+        working-directory: ansible/
+        run: yamllint .
