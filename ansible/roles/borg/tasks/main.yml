@@ -1,0 +1,91 @@
+---
+
+# - name: SSH Keys - Add Work SSH Key
+#   authorized_key:
+#     user: "{{ main_username }}"
+#     state: present
+#     key: "{{ secret_work_ssh }}"
+
+- name: create config directories
+  file:
+    path: "/home/{{ main_username }}/{{ item }}"
+    state: directory
+    owner: "{{ main_username }}"
+    group: "{{ main_groupname }}"
+  loop:
+    - docker
+    - docker/diun
+    - docker/nginx
+    - caddy
+
+# - name: Copy certs script
+#   template:
+#     src: "{{ item.src }}"
+#     dest: /home/{{ main_username }}/{{ item.dest }}
+#     owner: "{{ main_username }}"
+#     group: "{{ main_username }}"
+#     mode: +x
+#   loop:
+#     - {src: 'certs.sh.j2', dest: 'certs.sh'}
+#     - {src: 'ddns_vps.sh.j2', dest: 'ddns_vps.sh'}
+
+#### DIUN
+# - name: Copy DIUN Config Template
+#   template:
+#     src: diun_config.yml.j2
+#     dest: /home/{{ main_username }}/docker/diun/config.yml
+#     owner: "{{ main_username }}"
+#     group: "{{ main_username }}"
+
+# ### Backup Restore
+# - name: Create restore script
+#   copy:
+#     dest: /home/{{ main_username }}/restore.sh
+#     owner: "{{ main_username }}"
+#     group: "{{ main_username }}"
+#     mode: +x
+#     content: |
+#       #!/bin/bash
+#       /usr/local/bin/autorestic restore -f -l docker --from synology_docker --to /
+#   when: pull_backup == true
+# - name: Run restore script
+#   command: /bin/bash ./restore.sh
+#   args:
+#     chdir: "/home/{{ main_username }}"
+#   when: pull_backup == true
+# - name: Remove restore script
+#   file:
+#     path: /home/{{ main_username }}/restore.sh
+#     state: absent
+#   when: pull_backup == true
+
+# ### Wireguard
+# - name: Enable IPv4 forwarding
+#   sysctl:
+#     name: net.ipv4.ip_forward
+#     value: 1
+#     reload: yes
+
+# - name: Create wireguard conf
+#   copy:
+#     dest: /etc/wireguard/wg0.conf
+#     owner: root
+#     group: root
+#     mode: 0600
+#     content: "{{ secret_honor_wireguard_config }}"
+#   notify:
+#     - start wireguard service
+
+- name: Stop resolved
+  service:
+    name: systemd-resolved
+    enabled: no
+    state: stopped
+
+# - name: Copy WG Tunnel Check Scripts
+#   template:
+#     src: wg-check.sh.j2
+#     dest: /home/{{ main_username }}/wg-check.sh
+#     owner: "{{ main_username }}"
+#     group: "{{ main_username }}"
+#     mode: +x
