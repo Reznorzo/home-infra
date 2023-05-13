@@ -26,3 +26,7 @@ jobs:
       - name: Lint YAML files
         working-directory: ansible/
         run: yamllint . -sc ../yamllint.yml
+
+      - name: Syntax check on main playbook
+        working-directory: ansible/playbooks
+        run: ansible-playbook run.yml --syntax-check

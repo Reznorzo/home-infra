@@ -15,8 +15,8 @@
     - '../vars/vault.yml'
     - 'group_vars/all.yaml'
   roles:
-    - role: install/mergerfs
-      become: true
+    # - role: install/mergerfs
+      # become: true
     - role: install/runitor
     - role: install/telegraf
       become: true
@@ -34,7 +34,7 @@
     - '../vars/vault.yml'
     - 'group_vars/all.yaml'
   roles:
-    - role: install/lego
+    # - role: install/lego
     - role: install/runitor
 
 - hosts: honor
@@ -42,7 +42,7 @@
     - '../vars/vault.yml'
     - 'group_vars/all.yaml'
   roles:
-    - role: install/lego
+    # - role: install/lego
     - role: install/runitor
 
 - hosts: dominion omada
