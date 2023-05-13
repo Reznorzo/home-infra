@@ -25,4 +25,4 @@ jobs:
 
       - name: Lint YAML files
         working-directory: ansible/
-        run: yamllint .
+        run: yamllint . -sc ../yamllint.yml
