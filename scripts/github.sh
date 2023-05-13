@@ -3,10 +3,6 @@ green=$'\e[0;32m'
 red=$'\e[0;31m'
 reset=$'\e[0m'
 
-export BW_SESSION=$(bw unlock --raw)
-export GITHUB_TOKEN=$(bw get password "ghToken")
-export GITHUB_USER=Reznorzo
-
 if ( cat $HOME/home-infra/ansible/vars/vault.yml | grep -q "\$ANSIBLE_VAULT;" ); then
 echo "${green}Vault Encrypted. Safe to commit.${reset}"
 else
