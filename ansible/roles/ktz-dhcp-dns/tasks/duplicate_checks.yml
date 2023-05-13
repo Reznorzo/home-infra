@@ -23,7 +23,7 @@
         - dupe_check.reservation_count_total == dupe_check.reservation_mac_unique
         - dupe_check.reservation_count_total == dupe_check.reservation_ip_unique
         - dupe_check.reservation_count_total == dupe_check.reservation_hostname_unique
-  
+
   rescue:
     - name: dupe check
       debug:
