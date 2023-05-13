@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+export BW_SESSION=$(bw unlock --raw)
+export GITHUB_TOKEN=$(bw get password "ghToken")
+export GITHUB_USER=Reznorzo
+
 set -e
 
 PATH=${PWD}/env/bin:${PATH}
