@@ -31,4 +31,5 @@ jobs:
         run: chmod -x scripts/vault.sh
 
       - name: Syntax check on main playbook
+        working-directory: ansible/
         run: ansible-playbook playbooks/run.yml --syntax-check
