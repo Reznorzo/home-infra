@@ -3,10 +3,6 @@ name: Lint Ansible
 
 on:
   push:
-    paths:
-      - ansible/**
-    branches:
-      - main
   pull_request:
     types: [opened, reopened, edited]
 
