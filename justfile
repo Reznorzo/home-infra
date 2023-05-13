@@ -15,9 +15,6 @@ export JUST_LOG := log
 
 # Setup
 install:
-  export BW_SESSION=$(bw unlock --raw)
-  export GITHUB_TOKEN=$(bw get password "ghToken")
-  export GITHUB_USER=Reznorzo
   cd {{ ansible_dir }}; ansible-galaxy role install -r requirements.yml
   cd {{ ansible_dir }};  ansible-galaxy collection install -r requirements.yml
   cd {{ ansible_dir }};  ansible-galaxy collection install community.general
