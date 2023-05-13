@@ -1,3 +1,3 @@
 #!/bin/sh
 
-bw get password Ansible Infra
+bw get password "Ansible Infra"
