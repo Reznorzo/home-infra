@@ -6,6 +6,6 @@ PATH=${PWD}/env/bin:${PATH}
 
 yamllint -sc yamllint.yml ./ansible
 
-cd ansible/playbooks
+cd ansible/
 
 ansible-playbook playbooks/run.yml --syntax-check
