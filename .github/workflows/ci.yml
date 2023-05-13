@@ -28,7 +28,7 @@ jobs:
         run: yamllint . -sc ../yamllint.yml
 
       - name: Pretend executable is vault password
-        run: chmod -x scripts/vault-pass.sh
+        run: chmod -x scripts/vault.sh
 
       - name: Syntax check on main playbook
         working-directory: ansible/playbooks
